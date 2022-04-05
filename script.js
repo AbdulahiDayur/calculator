@@ -9,6 +9,7 @@ let awaitingNextValue = false;
 function sendNumberValue(number) {
   if (awaitingNextValue) {
     calculatorDisplay.textContent = number;
+    awaitingNextValue = false;
   } else {
     calculatorDisplay.textContent === "0" ? calculatorDisplay.textContent = number : calculatorDisplay.textContent += number;
   }
@@ -21,18 +22,34 @@ function addDecimal() {
   }
 }
 
+// Calculate first and Seoncd Values depending on operator 
+const calculate = {
+  '/': (firstNumber, secondNumber) => firstNumber / secondNumber,
+  '*': (firstNumber, secondNumber) => firstNumber * secondNumber,
+  '+': (firstNumber, secondNumber) => firstNumber + secondNumber,
+  '-': (firstNumber, secondNumber) => firstNumber - secondNumber,
+  '=': (firstNumber, secondNumber) => firstNumber = secondNumber,
+}
+
 function useOperator(operator) {
-  const currentValue = calculatorDisplay.textContent;
+  const currentValue = Number(calculatorDisplay.textContent);
+  // Prevent Multiple Operators 
+  if (operatorValue && awaitingNextValue) {
+    operatorValue = operator;
+    return 
+  }
   // Assign firstVal if no value
   if (!firstValue) {
     firstValue = currentValue
   } else {
-    console.log('currentValue: ', currentValue);
+    const calculaton = calculate[operatorValue](firstValue, currentValue);
+    calculatorDisplay.textContent = calculaton
+    firstValue = calculaton
   }
   // Ready for next value, store operator
   awaitingNextValue = true
   operatorValue = operator;
-  console.log(`firstValue: ${firstValue} operatorValue: ${operatorValue}`);
+  
 }
 
 // add event Listeners for numbers, operators, decimal buttons
